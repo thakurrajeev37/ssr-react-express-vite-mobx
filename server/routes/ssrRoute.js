@@ -1,5 +1,4 @@
 import path from "node:path";
-import fs from "node:fs";
 import { createInitialStores } from "../initialStores.js";
 
 // Factory to create the SSR middleware with captured dependencies (vite, template, isProd)

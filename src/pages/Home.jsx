@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react";
 import { useStore } from "../stores/StoreContext.jsx";
 import { useHomeStore } from "../stores/rootStores.js";

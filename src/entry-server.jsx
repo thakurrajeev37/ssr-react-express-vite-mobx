@@ -1,4 +1,3 @@
-import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
 import App from "./App.jsx";
@@ -21,10 +20,6 @@ export async function render(url, { initialStores } = {}) {
 
 	// Naive 404 detection: if NotFound content is present. In real apps, use route-match APIs.
 	if (appHtml.includes("Not Found")) status = 404;
-
-	// Serialize page-level stores if any were created
-	let pageStoresSerialized = {};
-	// No dynamic page store collection now; using static root stores
 
 	const stateData = { stores: JSON.parse(JSON.stringify(stores)) };
 	const stateScript = `<script>window.__INITIAL_STATE__ = ${JSON.stringify(stateData).replace(/</g, "\\u003c")};</script>`;
