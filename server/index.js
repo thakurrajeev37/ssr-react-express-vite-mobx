@@ -52,6 +52,29 @@ async function createServer() {
 		template = fs.readFileSync(path.join(distClientDir, "index.html"), "utf-8");
 	}
 
+
+	// Auth endpoints (API)
+	app.post("/api/login", express.json(), (req, res) => {
+		const { email, password } = req.body;
+		// TODO: Implement real authentication logic
+		if (email && password) {
+			return res.json({ success: true, message: `Login successful for ${email}` });
+		}
+		res.status(400).json({ success: false, error: "Missing email or password" });
+	});
+
+	app.post("/api/register", express.json(), (req, res) => {
+		const { email, password, confirmPassword } = req.body;
+		// TODO: Implement real registration logic
+		if (!email || !password || !confirmPassword) {
+			return res.status(400).json({ success: false, error: "Missing fields" });
+		}
+		if (password !== confirmPassword) {
+			return res.status(400).json({ success: false, error: "Passwords do not match" });
+		}
+		return res.json({ success: true, message: `Registration successful for ${email}` });
+	});
+
 	// Health endpoints (must come before SSR catch-all)
 	app.get("/healthcheck", healthCheck);
 

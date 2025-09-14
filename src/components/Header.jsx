@@ -26,6 +26,14 @@ export default function Header() {
 					>
 						About
 					</Button>
+					<Button
+						component={RouterLink}
+						to="/auth"
+						color="inherit"
+						size="small"
+					>
+						Login
+					</Button>
 				</Box>
 			</Toolbar>
 		</AppBar>
