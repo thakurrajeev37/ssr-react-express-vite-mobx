@@ -1,18 +1,20 @@
 # SSR React + Express + Vite (JS)
 
-Production-ready server-side rendering boilerplate using React 18, Express, and Vite 5.
+Production-ready server-side rendering boilerplate using React, Express, Vite, MUI and MOBx.
 
 ## Features
-- React 18 with hydrateRoot
+- React with hydrateRoot
 - Express server with Vite middleware (dev) and prebuilt assets (prod)
 - SSR with separate client/server builds
-- Security via helmet, compression, and logging via morgan
+- Security via helmet, compression, and logging via pino
 - Single index.html template with inject points
+- MOBx for state management
+- Material UI for design
 
 ## Scripts
 - `npm run dev` — start Express with Vite middleware (HMR)
 - `npm run build` — build client and server bundles
-- `npm run preview` — start production server (serves built assets)
+- `npm start` — start production server (serves built assets)
 
 ## Getting started
 1. Install dependencies
@@ -37,7 +39,7 @@ npm run build
 
 ### Preview (Production)
 ```sh
-npm run preview
+npm start
 ```
 Open http://localhost:3000.
 
