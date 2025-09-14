@@ -2,8 +2,8 @@
 // In future this could fetch from a DB or external API.
 
 export function getInitialAboutData() {
-  return {
-    info: 'About page data loaded (ssr rendering)',
-    loaded: true
-  };
+	return {
+		info: "About page data loaded (ssr rendering)",
+		loaded: true,
+	};
 }
