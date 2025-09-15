@@ -1,4 +1,4 @@
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useStore } from "../stores/StoreContext.jsx";
 
 const Footer = observer(function Footer() {
