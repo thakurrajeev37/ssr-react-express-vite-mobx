@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Alert from '@mui/material/Alert';
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { Navigate } from "react-router-dom";
 import { authStore } from "./stores/authStore";
 export default observer(function ProtectedRoute({ children }) {

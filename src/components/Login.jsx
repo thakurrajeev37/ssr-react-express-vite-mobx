@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Card, Typography, Box } from "@mui/material";
 import Alert from '@mui/material/Alert';

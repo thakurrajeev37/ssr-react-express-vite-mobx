@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { TextField, Button, Card, Typography, Box } from "@mui/material";
 import Alert from '@mui/material/Alert';
 import { authStore } from "../stores/authStore";
