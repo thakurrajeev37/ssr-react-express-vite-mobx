@@ -1,7 +1,12 @@
+import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import { observer } from "mobx-react";
+import { authStore } from "../stores/authStore";
 
-export default function Header() {
+function Header() {
+	const [mounted, setMounted] = React.useState(false);
+	React.useEffect(() => { setMounted(true); }, []);
 	return (
 		<AppBar position="static" color="primary" enableColorOnDark>
 			<Toolbar variant="regular" sx={{ gap: 2 }}>
@@ -26,16 +31,42 @@ export default function Header() {
 					>
 						About
 					</Button>
-					<Button
-						component={RouterLink}
-						to="/auth"
-						color="inherit"
-						size="small"
-					>
-						Login
-					</Button>
+					{mounted ? (
+						<>
+							{authStore.isAuthenticated && (
+								<Button
+									component={RouterLink}
+									to="/dashboard"
+									color="inherit"
+									size="small"
+								>
+									Dashboard
+								</Button>
+							)}
+							{!authStore.isAuthenticated ? (
+								<Button
+									component={RouterLink}
+									to="/auth"
+									color="inherit"
+									size="small"
+								>
+									Login
+								</Button>
+							) : (
+								<Button
+									color="inherit"
+									size="small"
+									onClick={() => authStore.logout()}
+								>
+									Logout
+								</Button>
+							)}
+						</>
+					) : null}
 				</Box>
 			</Toolbar>
 		</AppBar>
 	);
 }
+
+export default observer(Header);
