@@ -20,9 +20,6 @@ export default function Auth() {
             <ToggleButton value="register">Register</ToggleButton>
           </ToggleButtonGroup>
         </Box>
-        <Typography variant="h5" align="center" gutterBottom>
-          {mode === "login" ? "Login" : "Register"}
-        </Typography>
         {mode === "login" ? <Login /> : <Register />}
       </Paper>
     </Box>

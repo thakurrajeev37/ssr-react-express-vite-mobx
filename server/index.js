@@ -1,10 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import express from "express";
+import mongoose from "mongoose";
 import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 import { healthCheck } from "./controllers/healthController.js";
+import authRoutes from "./routes/auth.js";
 // SSR moved into dedicated route module
 import { createSsrMiddleware } from "./routes/ssrRoute.js";
 
@@ -12,7 +14,18 @@ const isProd = process.env.NODE_ENV === "production";
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 async function createServer() {
+	// Connect to MongoDB
+	// await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://cluster0.nr6xw0j.mongodb.net/" --apiVersion 1 --username thakurrajeev37_db_user --password KpB0t51tqDfB5rkl', {
+	// 	useNewUrlParser: true,
+	// 	useUnifiedTopology: true,
+	// });
+	await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://thakurrajeev37_db_user:KpB0t51tqDfB5rkl@cluster0.nr6xw0j.mongodb.net/school-db?retryWrites=true&w=majority', {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	});
 	const app = express();
+	// Parse JSON bodies for all requests
+	app.use(express.json());
 
 	// Basic security & performance middleware
 	app.use(
@@ -75,6 +88,8 @@ async function createServer() {
 		return res.json({ success: true, message: `Registration successful for ${email}` });
 	});
 
+	// Auth endpoints
+	app.use("/api/auth", authRoutes);
 	// Health endpoints (must come before SSR catch-all)
 	app.get("/healthcheck", healthCheck);
 
