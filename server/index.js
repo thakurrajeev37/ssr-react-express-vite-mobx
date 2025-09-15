@@ -7,6 +7,7 @@ import compression from "compression";
 import morgan from "morgan";
 import { healthCheck } from "./controllers/healthController.js";
 import authRoutes from "./routes/auth.js";
+import userRouter from './routes/user.js';
 // SSR moved into dedicated route module
 import { createSsrMiddleware } from "./routes/ssrRoute.js";
 
@@ -90,6 +91,8 @@ async function createServer() {
 
 	// Auth endpoints
 	app.use("/api/auth", authRoutes);
+	// User profile endpoints
+	app.use('/api/user', userRouter);
 	// Health endpoints (must come before SSR catch-all)
 	app.get("/healthcheck", healthCheck);
 

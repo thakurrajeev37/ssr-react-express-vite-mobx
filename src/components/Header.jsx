@@ -43,6 +43,16 @@ function Header() {
 									Dashboard
 								</Button>
 							)}
+							{mounted && authStore.isAuthenticated && (
+								<Button
+									component={RouterLink}
+									to="/profile"
+									color="inherit"
+									size="small"
+								>
+									Profile
+								</Button>
+							)}
 							{!authStore.isAuthenticated ? (
 								<Button
 									component={RouterLink}
