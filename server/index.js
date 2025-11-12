@@ -10,20 +10,15 @@ import authRoutes from "./routes/auth.js";
 import userRouter from './routes/user.js';
 // SSR moved into dedicated route module
 import { createSsrMiddleware } from "./routes/ssrRoute.js";
+import { initViteDevServer, initProdStatic } from "./utils/viteHelpers.js";
+import { connectMongo } from "./utils/db.js";
 
 const isProd = process.env.NODE_ENV === "production";
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 async function createServer() {
 	// Connect to MongoDB
-	// await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://cluster0.nr6xw0j.mongodb.net/" --apiVersion 1 --username thakurrajeev37_db_user --password KpB0t51tqDfB5rkl', {
-	// 	useNewUrlParser: true,
-	// 	useUnifiedTopology: true,
-	// });
-	await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://thakurrajeev37_db_user:KpB0t51tqDfB5rkl@cluster0.nr6xw0j.mongodb.net/school-db?retryWrites=true&w=majority', {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-	});
+	await connectMongo();
 	const app = express();
 	// Parse JSON bodies for all requests
 	app.use(express.json());
@@ -40,30 +35,13 @@ async function createServer() {
 	let vite;
 	let template;
 
+
+
 	if (!isProd) {
-		const { createServer: createViteServer } = await import("vite");
-		vite = await createViteServer({
-			server: { middlewareMode: true },
-			appType: "custom",
-		});
-		app.use(vite.middlewares);
-		template = fs.readFileSync(
-			path.resolve(process.cwd(), "index.html"),
-			"utf-8",
-		);
+		({ vite, template } = await initViteDevServer(app));
 	} else {
-		// Serve built static assets
-		const distClientDir = path.resolve(process.cwd(), "dist/client");
-		app.use(
-			"/assets",
-			express.static(path.join(distClientDir, "assets"), {
-				maxAge: "1y",
-				immutable: true,
-			}),
-		);
-		// Serve other static files (e.g., copied from public like /logo.svg)
-		app.use(express.static(distClientDir, { index: false, maxAge: "1h" }));
-		template = fs.readFileSync(path.join(distClientDir, "index.html"), "utf-8");
+		// Initialize production static assets serving and template loading
+		({ template } = await initProdStatic(app));
 	}
 
 
