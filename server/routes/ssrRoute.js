@@ -22,11 +22,10 @@ export function createSsrMiddleware({ vite, template, isProd }) {
 					path.resolve(process.cwd(), "dist/server/entry-server.js")
 				);
 			}
-			const render =
-				renderModule && (renderModule.render || renderModule.default);
-			if (typeof render !== "function") {
-				throw new Error("SSR entry did not export a render function");
-			}
+					const render = renderModule && renderModule.render;
+					if (typeof render !== "function") {
+						throw new Error("SSR entry did not export a named 'render' function");
+					}
 
 			const initialStores = createInitialStores(url);
 			const {

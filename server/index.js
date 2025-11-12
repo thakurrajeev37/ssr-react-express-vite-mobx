@@ -1,18 +1,27 @@
 import fs from "node:fs";
 import path from "node:path";
 import express from "express";
+import mongoose from "mongoose";
 import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 import { healthCheck } from "./controllers/healthController.js";
+import authRoutes from "./routes/auth.js";
+import userRouter from './routes/user.js';
 // SSR moved into dedicated route module
 import { createSsrMiddleware } from "./routes/ssrRoute.js";
+import { initViteDevServer, initProdStatic } from "./utils/viteHelpers.js";
+import { connectMongo } from "./utils/db.js";
 
 const isProd = process.env.NODE_ENV === "production";
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 async function createServer() {
+	// Connect to MongoDB
+	await connectMongo();
 	const app = express();
+	// Parse JSON bodies for all requests
+	app.use(express.json());
 
 	// Basic security & performance middleware
 	app.use(
@@ -26,32 +35,42 @@ async function createServer() {
 	let vite;
 	let template;
 
+
+
 	if (!isProd) {
-		const { createServer: createViteServer } = await import("vite");
-		vite = await createViteServer({
-			server: { middlewareMode: true },
-			appType: "custom",
-		});
-		app.use(vite.middlewares);
-		template = fs.readFileSync(
-			path.resolve(process.cwd(), "index.html"),
-			"utf-8",
-		);
+		({ vite, template } = await initViteDevServer(app));
 	} else {
-		// Serve built static assets
-		const distClientDir = path.resolve(process.cwd(), "dist/client");
-		app.use(
-			"/assets",
-			express.static(path.join(distClientDir, "assets"), {
-				maxAge: "1y",
-				immutable: true,
-			}),
-		);
-		// Serve other static files (e.g., copied from public like /logo.svg)
-		app.use(express.static(distClientDir, { index: false, maxAge: "1h" }));
-		template = fs.readFileSync(path.join(distClientDir, "index.html"), "utf-8");
+		// Initialize production static assets serving and template loading
+		({ template } = await initProdStatic(app));
 	}
 
+
+	// Auth endpoints (API)
+	app.post("/api/login", express.json(), (req, res) => {
+		const { email, password } = req.body;
+		// TODO: Implement real authentication logic
+		if (email && password) {
+			return res.json({ success: true, message: `Login successful for ${email}` });
+		}
+		res.status(400).json({ success: false, error: "Missing email or password" });
+	});
+
+	app.post("/api/register", express.json(), (req, res) => {
+		const { email, password, confirmPassword } = req.body;
+		// TODO: Implement real registration logic
+		if (!email || !password || !confirmPassword) {
+			return res.status(400).json({ success: false, error: "Missing fields" });
+		}
+		if (password !== confirmPassword) {
+			return res.status(400).json({ success: false, error: "Passwords do not match" });
+		}
+		return res.json({ success: true, message: `Registration successful for ${email}` });
+	});
+
+	// Auth endpoints
+	app.use("/api/auth", authRoutes);
+	// User profile endpoints
+	app.use('/api/user', userRouter);
 	// Health endpoints (must come before SSR catch-all)
 	app.get("/healthcheck", healthCheck);
 
